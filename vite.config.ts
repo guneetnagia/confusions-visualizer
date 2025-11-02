@@ -5,12 +5,15 @@ import path from "path";
 // https://vitejs.dev/config/
 export default defineConfig(async ({ mode }) => {
   // dynamically load dev-only plugin to avoid Rollup trying to resolve / externalize it at build time
-  const devPlugins = [];
+  const devPlugins = [] as any[];
   if (mode === "development") {
-    // lazy-import so production build doesn't attempt to bundle/node-resolve this module
-    const mod = await import("lovable-tagger");
-    if (mod && typeof mod.componentTagger === "function") {
-      devPlugins.push(mod.componentTagger());
+    try {
+      const mod = await import("lovable-tagger");
+      if (mod && typeof mod.componentTagger === "function") {
+        devPlugins.push(mod.componentTagger());
+      }
+    } catch (e) {
+      // ignore if the dev-only plugin isn't available in some environments
     }
   }
 
@@ -26,5 +29,8 @@ export default defineConfig(async ({ mode }) => {
         "@": path.resolve(__dirname, "./src"),
       },
     },
+    build: {
+      sourcemap: true
+    }
   };
 });
