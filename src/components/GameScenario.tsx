@@ -152,3 +152,76 @@ export const spamScenarios: Scenario[] = [
     category: "spam"
   }
 ];
+
+export const flightFraudScenarios: Scenario[] = [
+  {
+    id: 1,
+    description: "Booking #1",
+    details: "Last-minute one-way international ticket, paid with new credit card, IP from different country",
+    actualValue: true,
+    category: "fraud"
+  },
+  {
+    id: 2,
+    description: "Booking #2",
+    details: "Round-trip family vacation, booked 3 months ahead, verified account, consistent location",
+    actualValue: false,
+    category: "fraud"
+  },
+  {
+    id: 3,
+    description: "Booking #3",
+    details: "Multiple bookings in 10 minutes, different names, same payment method, high-value routes",
+    actualValue: true,
+    category: "fraud"
+  },
+  {
+    id: 4,
+    description: "Booking #4",
+    details: "Business class return flight, corporate account, frequent traveler status, advance booking",
+    actualValue: false,
+    category: "fraud"
+  },
+  {
+    id: 5,
+    description: "Booking #5",
+    details: "Unusual route pattern, booking from VPN, mismatched billing address, rush delivery",
+    actualValue: true,
+    category: "fraud"
+  },
+  {
+    id: 6,
+    description: "Booking #6",
+    details: "Economy class weekend trip, repeat customer, normal payment pattern, verified email",
+    actualValue: false,
+    category: "fraud"
+  },
+  {
+    id: 7,
+    description: "Booking #7",
+    details: "First-class tickets, suspicious email domain, payment declined twice then succeeded",
+    actualValue: true,
+    category: "fraud"
+  },
+  {
+    id: 8,
+    description: "Booking #8",
+    details: "Group booking for conference, company credit card, detailed itinerary, confirmed contacts",
+    actualValue: false,
+    category: "fraud"
+  },
+  {
+    id: 9,
+    description: "Booking #9",
+    details: "One-way ticket to high-risk destination, new account created minutes before, unusually low price accepted",
+    actualValue: true,
+    category: "fraud"
+  },
+  {
+    id: 10,
+    description: "Booking #10",
+    details: "Family holiday package, loyalty program member, standard payment, advance check-in completed",
+    actualValue: false,
+    category: "fraud"
+  }
+];

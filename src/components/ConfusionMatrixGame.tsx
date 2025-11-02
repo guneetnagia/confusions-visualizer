@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { medicalScenarios, spamScenarios, Scenario } from "./GameScenario";
-import { CheckCircle2, XCircle, Heart, Mail } from "lucide-react";
+import { medicalScenarios, spamScenarios, flightFraudScenarios, Scenario } from "./GameScenario";
+import { CheckCircle2, XCircle, Heart, Mail, Plane } from "lucide-react";
 
 interface GameStats {
   tp: number;
@@ -13,14 +13,14 @@ interface GameStats {
 }
 
 const ConfusionMatrixGame = () => {
-  const [gameMode, setGameMode] = useState<"medical" | "spam" | null>(null);
+  const [gameMode, setGameMode] = useState<"medical" | "spam" | "fraud" | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [stats, setStats] = useState<GameStats>({ tp: 0, tn: 0, fp: 0, fn: 0 });
   const [gameComplete, setGameComplete] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
   const [lastPrediction, setLastPrediction] = useState<"correct" | "incorrect" | null>(null);
 
-  const scenarios = gameMode === "medical" ? medicalScenarios : spamScenarios;
+  const scenarios = gameMode === "medical" ? medicalScenarios : gameMode === "spam" ? spamScenarios : flightFraudScenarios;
   const currentScenario = scenarios[currentIndex];
 
   const calculateMetrics = (s: GameStats) => {
@@ -41,25 +41,25 @@ const ConfusionMatrixGame = () => {
       newStats.tp++;
       setLastPrediction("correct");
       toast.success("Correct! True Positive", {
-        description: gameMode === "medical" ? "Patient has the condition" : "It's spam"
+        description: gameMode === "medical" ? "Patient has the condition" : gameMode === "spam" ? "It's spam" : "Fraudulent booking"
       });
     } else if (!prediction && !actual) {
       newStats.tn++;
       setLastPrediction("correct");
       toast.success("Correct! True Negative", {
-        description: gameMode === "medical" ? "Patient is healthy" : "It's legitimate"
+        description: gameMode === "medical" ? "Patient is healthy" : gameMode === "spam" ? "It's legitimate" : "Legitimate booking"
       });
     } else if (prediction && !actual) {
       newStats.fp++;
       setLastPrediction("incorrect");
       toast.error("Incorrect! False Positive", {
-        description: gameMode === "medical" ? "Patient is actually healthy" : "It's actually legitimate"
+        description: gameMode === "medical" ? "Patient is actually healthy" : gameMode === "spam" ? "It's actually legitimate" : "Actually legitimate booking"
       });
     } else {
       newStats.fn++;
       setLastPrediction("incorrect");
       toast.error("Incorrect! False Negative", {
-        description: gameMode === "medical" ? "Patient actually has the condition" : "It's actually spam"
+        description: gameMode === "medical" ? "Patient actually has the condition" : gameMode === "spam" ? "It's actually spam" : "Actually fraudulent booking"
       });
     }
 
@@ -101,7 +101,7 @@ const ConfusionMatrixGame = () => {
             Make predictions and watch your confusion matrix metrics update in real-time!
           </p>
           
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-3 gap-6">
             <Button
               onClick={() => setGameMode("medical")}
               className="h-40 flex flex-col gap-4 text-lg hover:scale-105 transition-transform"
@@ -123,6 +123,18 @@ const ConfusionMatrixGame = () => {
               <div>
                 <div className="font-bold">Spam Detection</div>
                 <div className="text-sm opacity-70">Identify spam emails</div>
+              </div>
+            </Button>
+
+            <Button
+              onClick={() => setGameMode("fraud")}
+              className="h-40 flex flex-col gap-4 text-lg hover:scale-105 transition-transform"
+              variant="outline"
+            >
+              <Plane className="w-12 h-12 text-primary" />
+              <div>
+                <div className="font-bold">Flight Booking Fraud</div>
+                <div className="text-sm opacity-70">Detect fraudulent bookings</div>
               </div>
             </Button>
           </div>
@@ -204,7 +216,7 @@ const ConfusionMatrixGame = () => {
         <div className="mb-6">
           <div className="flex justify-between items-center mb-2">
             <h2 className="text-2xl font-bold">
-              {gameMode === "medical" ? "Medical Diagnosis Game" : "Spam Detection Game"}
+              {gameMode === "medical" ? "Medical Diagnosis Game" : gameMode === "spam" ? "Spam Detection Game" : "Flight Booking Fraud Game"}
             </h2>
             <Button onClick={resetGame} variant="outline" size="sm">
               Change Game
@@ -231,7 +243,9 @@ const ConfusionMatrixGame = () => {
                 <div className="text-lg font-semibold mb-4 text-primary">
                   {gameMode === "medical" 
                     ? "Does this patient have heart disease risk?"
-                    : "Is this email spam?"}
+                    : gameMode === "spam"
+                    ? "Is this email spam?"
+                    : "Is this booking fraudulent?"}
                 </div>
               </div>
 
@@ -243,7 +257,7 @@ const ConfusionMatrixGame = () => {
                     className="h-20 text-xl bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700"
                   >
                     <XCircle className="w-8 h-8 mr-2" />
-                    {gameMode === "medical" ? "At Risk" : "Spam"}
+                    {gameMode === "medical" ? "At Risk" : gameMode === "spam" ? "Spam" : "Fraud"}
                   </Button>
                   <Button
                     onClick={() => handlePrediction(false)}
