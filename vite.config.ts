@@ -8,10 +8,7 @@ export default defineConfig(async ({ mode }) => {
   const devPlugins = [] as any[];
   if (mode === "development") {
     try {
-      const mod = await import("lovable-tagger");
-      if (mod && typeof mod.componentTagger === "function") {
-        devPlugins.push(mod.componentTagger());
-      }
+      
     } catch (e) {
       // ignore if the dev-only plugin isn't available in some environments
     }
